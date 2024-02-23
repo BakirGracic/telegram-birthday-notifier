@@ -11,7 +11,7 @@ Get Telegram messages for upcoming birthdays
 
 ### How to REPO
 - clone repo `git clone https://github.com/BakirGracic/telegram-birthday-notifier.git`
-- add birtdays in birthdays.json in correct JSON syntax (array of objects with name and date string key value pairs) with DD/MM/YYYY format WITHOUT LEADING ZEROS
+- add birtdays in birthdays.json in correct JSON syntax (array of objects with name and date string key value pairs) with DD/MM (only month and day) format WITHOUT LEADING ZEROS
 - customize bot and chat ID alog with custom message from the bot
 
 ### How to BOT

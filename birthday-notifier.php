@@ -5,7 +5,7 @@ $data = json_decode(file_get_contents('birthdays.json'), true);
 
 // Check if there is an upcoming birtday
 $tomorrow = strtotime("+1 day");
-$tomorrow = date("j/n/Y", $tomorrow);
+$tomorrow = date("j/n", $tomorrow);
 $people = [];
 foreach ($data as $item) {
     if($item['date'] == $tomorrow) {
