@@ -16,7 +16,7 @@ Get Telegram messages for upcoming birthdays
 
 ### How to BOT
 - create your bot using BotFather (search online for how to), it will provide bot ID
-- get chat ID with your bot with this URL `https://api.telegram.org/bot<BOT_ID_HERE>/getUpdates` (if no big JSON wait a few minutes)
+- get chat ID with your bot with this URL `https://api.telegram.org/bot<BOT_ID_HERE>/getUpdates` (if no big JSON wait a few minutes and try sending random messages to your bot)
 
 ### How to AUTOMATION
 - run `crontab -e`
