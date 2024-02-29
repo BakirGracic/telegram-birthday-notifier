@@ -1,20 +1,20 @@
 <?php
 
-// Bot Data
-$telegramBotToken = 'YOUR_BOT_TOKEN'; // Your Telegram Bot API token (obtainable from the BotFather via Telegram)
-$telegramChatID = 'CHAT_ID'; // Your Bot's Chat ID (see README.md to obtain)
 // Send Telegram Message
 function telegramResponse($msg) {
+    $telegramBotToken = 'YOUR_BOT_TOKEN';
+    $telegramChatID = 'CHAT_ID';
+
     $telegramApiURL = "https://api.telegram.org/bot$telegramBotToken/sendMessage?chat_id=$telegramChatID&text=" . urlencode($msg);
     $response = file_get_contents($telegramApiURL);
 }
 
 
-// Get birthdays data from json file
+// Get birthdays data from json
 $data = json_decode(file_get_contents('birthdays.json'), true);
+
 // Check if there is an upcoming birtday
-$tomorrow = strtotime("+1 day");
-$tomorrow = date("j/n", $tomorrow);
+$tomorrow = date("j/n", strtotime("+1 day"));
 $people = [];
 foreach ($data as $item) {
     if($item['date'] == $tomorrow) {
@@ -26,6 +26,7 @@ foreach ($data as $item) {
 // If no birthdays tomorrow - terminate
 if (empty($people)) {
     telegramResponse("[telegram-birthday-notifier] - No birtdays tomorrow!");
+    exit;
 }
 
 
@@ -33,3 +34,4 @@ if (empty($people)) {
 $message = "[telegram-birthday-notifier] - Birtdays tomorrow:\n" . implode(", \n", $people);
 // send message if upcoming bdays
 telegramResponse($message);
+exit;
