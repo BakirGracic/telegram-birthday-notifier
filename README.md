@@ -9,7 +9,7 @@ Get Telegram messages for upcoming birthdays!
 
 ### Steps
 - clone repo in user's home directory on your linux machine by running `git clone https://github.com/BakirGracic/telegram-birthday-notifier.git`
-- get inside the new directory by running `cd telegram-birtday-notifier`
+- get inside the new directory by running `cd telegram-birthday-notifier`
 - edit config by running `nano settings.conf`
 - run installer and input parameters by running `chmod +x installer.sh` and then `./installer.sh`
 - all set!
