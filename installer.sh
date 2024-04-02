@@ -17,7 +17,7 @@ if ! crontab -l > /dev/null 2>&1; then
 fi
 
 # Add Cron Job
-if (crontab -l 2>/dev/null; echo "$execution_mins $execution_hrs * * * /bin/sh >> $script_dir/telegram-birthday-notifier.sh") | crontab -; then
+if (crontab -l 2>/dev/null; echo "$execution_mins $execution_hrs * * * $script_dir/telegram-birthday-notifier.sh") | crontab -; then
     echo "Cron job added! telegram-birthday-notifier.sh will execute daily at $execution_hrs h and $execution_mins m"
 else
     echo "Error: Failed to add cron job. Please check permissions and try again."
