@@ -20,7 +20,7 @@ Get Telegram messages for upcoming birthdays!
 - send random message to your bot and get chat ID with your bot token from this URL `https://api.telegram.org/bot<BOT_ID_HERE>/getUpdates`
 
 ### Formats
-- you can create a secret (i.e. private) GitHub Gist and store birtdates there (make sure to link RAW text URL)
+- you can create a secret (i.e. private) GitHub Gist and store birtdates there (make sure to link RAW text URL, only url part until "/raw/" [inclusive])
 - syntax `NAME SURNAME-dd/mm/yyyy`
 - unlimited name words separated with spaces, then dash, then date in dd/mm/yyyy format
 
