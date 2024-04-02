@@ -12,6 +12,7 @@ Get Telegram messages for upcoming birthdays!
 - get inside the new directory by running `cd telegram-birthday-notifier`
 - edit config by running `nano settings.conf`
 - run installer and input parameters by running `chmod +x installer.sh` and then `./installer.sh`
+- enable main script execution by running `chmod +x telegram-birthday-notifier.sh`
 - all set!
 
 ### How to BOT
