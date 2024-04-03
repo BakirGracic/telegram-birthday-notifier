@@ -1,22 +1,26 @@
 #!/bin/bash
 
 # Execution date with script name
-date_for_errs=$(date +"%m/%d/%Y %H:%M:%S")
-DATE="[${date_for_errs} - main.sh] -> "
+date_for_errs=$(date +"%d/%m/%Y %H:%M:%S")
+EXEC_DATE="[${date_for_errs} - main.sh] -> "
+
+# Get script directory
+exec_script_path=$(realpath "$0")
+EXEC_DIR=$(dirname "$exec_script_path")
 
 # Load configuration file
-source settings.conf
+source "${EXEC_DIR}/settings.conf"
 
 # Check if the configuration file was loaded successfully
 if [ $? -ne 0 ]; then
-    echo "${DATE} Unable to load configuration file settings.conf"
+    echo "${EXEC_DATE} Unable to load configuration file settings.conf"
     exit 1
 fi
 
 # Download the birthdays file
 birthdays_file=$(mktemp)
 if ! curl -s "$BIRTHDAYS_FILE_URL" > "$birthdays_file"; then
-    echo "${DATE} Failed to download birthdays file from $BIRTHDAYS_FILE_URL"
+    echo "${EXEC_DATE} Failed to download birthdays file from $BIRTHDAYS_FILE_URL"
     exit 1
 fi
 
@@ -53,9 +57,9 @@ fi
 if ! curl -s -X POST "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendMessage" \
      -d chat_id="$TELEGRAM_CHAT_ID" \
      -d text="$message" > /dev/null 2>&1; then
-    echo "${DATE} Failed to send Telegram message"
+    echo "${EXEC_DATE} Failed to send Telegram message"
     exit 1
 fi
 
 # Success Message
-echo "${DATE} Successful!"
+echo "${EXEC_DATE} Successful!"
