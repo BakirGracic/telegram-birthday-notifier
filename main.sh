@@ -1,13 +1,26 @@
 #!/bin/bash
 
+# Execution date with script name
+date_for_errs=$(date +"%m/%d/%Y %H:%M:%S")
+DATE="[${date_for_errs} - main.sh] -> "
+
 # Load configuration file
 source settings.conf
 
+# Check if the configuration file was loaded successfully
+if [ $? -ne 0 ]; then
+    echo "${DATE} Unable to load configuration file settings.conf"
+    exit 1
+fi
+
 # Download the birthdays file
 birthdays_file=$(mktemp)
-curl -s "$BIRTHDAYS_FILE_URL" > "$birthdays_file"
+if ! curl -s "$BIRTHDAYS_FILE_URL" > "$birthdays_file"; then
+    echo "${DATE} Failed to download birthdays file from $BIRTHDAYS_FILE_URL"
+    exit 1
+fi
 
-# Calculate Tagret Date
+# Calculate tagret date
 target_date=$(date -d "+$NOTIFY_DAYS_BEFORE days" +%d/%m)
 
 # Identify upcoming birthdays
@@ -29,14 +42,20 @@ done < "$birthdays_file"
 # Remove the temporary file
 rm "$birthdays_file"
 
-# Telegram Message Creation
+# Make final Telegram message
 if [[ ${#upcoming_birthdays[@]} -gt 0 ]]; then
     message=$(IFS=$'\n'; echo "${upcoming_birthdays[*]}")
 else
     message="🎂 No birthdays in $NOTIFY_DAYS_BEFORE days!"
 fi
 
-# Telegam Message Send
-curl -s -X POST "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendMessage" \
+# Send final Telegram message
+if ! curl -s -X POST "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendMessage" \
      -d chat_id="$TELEGRAM_CHAT_ID" \
-     -d text="$message" > /dev/null 2>&1
+     -d text="$message" > /dev/null 2>&1; then
+    echo "${DATE} Failed to send Telegram message"
+    exit 1
+fi
+
+# Success Message
+echo "${DATE} Successful!"
