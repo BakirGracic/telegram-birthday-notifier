@@ -27,3 +27,7 @@ Get Telegram messages for upcoming birthdays!
 ### Why This?
 - aimed for those who don't remember birthdays very well (like me :P)
 - script is very basic and easy to modify, feel free to do such!
+
+### Cleanup
+- remove folder `telegram-birthday-notifier`, cd into it, then run  `cd .. && rm -rf telegram-birthday-notifier`
+- remove cron job entry with `crontab -e`, it should look like `0 9 * * * /root/telegram-birthday-notifier/main.sh >> /root/telegram-birthday-notifier/logfile.log 2>&1`
