@@ -30,7 +30,7 @@ target_date=$(date -d "+$NOTIFY_DAYS_BEFORE days" +%d/%m)
 # Identify upcoming birthdays
 upcoming_birthdays=()
 while IFS='-' read -r name birth_date; do
-    birth_date=$(date -d "$birth_date" +%d/%m)
+    birth_date=$(LC_TIME=C date -d "$birth_date" +%d/%m)
 
     # Check if birthday is within notification period
     if [[ "$birth_date" == "$target_date" ]]; then
