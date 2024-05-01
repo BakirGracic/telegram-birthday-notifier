@@ -30,13 +30,13 @@ target_date=$(date -d "+$NOTIFY_DAYS_BEFORE days" +%d/%m)
 # Identify upcoming birthdays
 upcoming_birthdays=()
 while IFS='-' read -r name birth_date; do
-    birth_date=$(LC_TIME=C date -d "$birth_date" +%d/%m)
+    birth_year=$(echo "$birth_date" | awk -F'/' '{print $3}')
+    birth_date=$(LC_TIME=C date -d "$(awk -F'/' '{print $2"/"$1"/"$3}' <<< "$birth_date")" +%d/%m)
 
     # Check if birthday is within notification period
     if [[ "$birth_date" == "$target_date" ]]; then
         current_year=$(date +%Y)
-        birth_year=$(date -d "$name" +%Y)
-        age=$(( current_year - birth_year ))
+    	age=$(( current_year - birth_year ))
         upcoming_birthdays+=("🎂 In $NOTIFY_DAYS_BEFORE days $name will be $age years old!")
     fi
 done < "$birthdays_file"
@@ -48,7 +48,7 @@ rm "$birthdays_file"
 if [[ ${#upcoming_birthdays[@]} -gt 0 ]]; then
     # Make final Telegram message
     message=$(IFS=$'\n'; echo "${upcoming_birthdays[*]}")
-    
+
     # Send final Telegram message
     if ! curl -s -X POST "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendMessage" \
          -d chat_id="$TELEGRAM_CHAT_ID" \
