@@ -1,14 +1,14 @@
 #!/bin/bash
 
-# Execution date with script name
+# Log timestamp
 date_for_errs=$(date +"%d/%m/%Y %H:%M:%S")
 EXEC_DATE="[${date_for_errs} - main.sh] -> "
 
-# Get script directory
+# Script directory
 exec_script_path=$(realpath "$0")
 EXEC_DIR=$(dirname "$exec_script_path")
 
-# Load configuration file
+# Configuration file
 source "${EXEC_DIR}/settings.conf"
 
 # Check if the configuration file was loaded successfully
@@ -24,21 +24,19 @@ if ! curl -s "$BIRTHDAYS_FILE_URL" > "$birthdays_file"; then
     exit 1
 fi
 
-# Calculate tagret date
+# Calculate target date
 target_date=$(date -d "+$NOTIFY_DAYS_BEFORE days" +%d/%m)
 
 # Identify upcoming birthdays
 upcoming_birthdays=()
-while read -r line; do
-    birth_date=$(echo "$line" | cut -d '-' -f2)
-    birth_date="${birth_date::-5}"
+while IFS='-' read -r name birth_date; do
+    birth_date=$(date -d "$birth_date" +%d/%m)
 
     # Check if birthday is within notification period
     if [[ "$birth_date" == "$target_date" ]]; then
-        name=$(echo "$line" | cut -d '-' -f1)
         current_year=$(date +%Y)
-        birth_year="${line: -4}"
-        age=$(( current_year - birth_year )) 
+        birth_year=$(date -d "$name" +%Y)
+        age=$(( current_year - birth_year ))
         upcoming_birthdays+=("🎂 In $NOTIFY_DAYS_BEFORE days $name will be $age years old!")
     fi
 done < "$birthdays_file"
@@ -46,20 +44,22 @@ done < "$birthdays_file"
 # Remove the temporary file
 rm "$birthdays_file"
 
-# Make final Telegram message
+# Check if there are upcoming birthdays
 if [[ ${#upcoming_birthdays[@]} -gt 0 ]]; then
+    # Make final Telegram message
     message=$(IFS=$'\n'; echo "${upcoming_birthdays[*]}")
+    
+    # Send final Telegram message
+    if ! curl -s -X POST "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendMessage" \
+         -d chat_id="$TELEGRAM_CHAT_ID" \
+         -d text="$message" > /dev/null 2>&1; then
+        echo "${EXEC_DATE} Failed to send Telegram message"
+        exit 1
+    fi
+
+    # Success Message
+    echo "${EXEC_DATE} Found birthdays, message sent - success"
 else
-    message="🎂 No birthdays in $NOTIFY_DAYS_BEFORE days!"
+    # Success Message
+    echo "${EXEC_DATE} No upcoming birthdays found - success"
 fi
-
-# Send final Telegram message
-if ! curl -s -X POST "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendMessage" \
-     -d chat_id="$TELEGRAM_CHAT_ID" \
-     -d text="$message" > /dev/null 2>&1; then
-    echo "${EXEC_DATE} Failed to send Telegram message"
-    exit 1
-fi
-
-# Success Message
-echo "${EXEC_DATE} Successful!"
